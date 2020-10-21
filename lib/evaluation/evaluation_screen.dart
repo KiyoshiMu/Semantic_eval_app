@@ -3,14 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:eval_app/evaluation/index.dart';
 
 class EvaluationScreen extends StatelessWidget {
-  static const header = ["Tag", 'Prob', "Check"];
+  // static const header = ["Tag", 'Prob', "Check"];
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EvaluationBloc, EvaluationState>(
       builder: (context, state) {
         if (state is TagState) {
-          final columns =
-              header.map((e) => DataColumn(label: Text(e))).toList();
+          final columns = [
+            DataColumn(label: Text("Tag")),
+            DataColumn(label: Text("Prob")),
+            DataColumn(label: Text("Check"))
+          ];
+
           final rows = state.evaluationModel
               .iter()
               .map((e) => DataRow(cells: [

@@ -4,11 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EvaluationPage extends StatelessWidget {
   final EvaluationRepository evaluationRepository;
-
-  const EvaluationPage({Key key, this.evaluationRepository}) : super(key: key);
+  final PageController pageController;
+  const EvaluationPage(
+      {Key key, this.evaluationRepository, this.pageController})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
+      controller: pageController,
       itemBuilder: (BuildContext context, int index) {
         print(index);
         return FutureBuilder(
@@ -21,7 +24,7 @@ class EvaluationPage extends StatelessWidget {
               return ListView(
                 children: [
                   Text(
-                    "Synopsis",
+                    "Synopsis ${evaluationModel.id}",
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline3,
                   ),

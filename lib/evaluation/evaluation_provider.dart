@@ -5,7 +5,7 @@ import 'package:eval_app/evaluation/index.dart';
 import 'package:flutter/services.dart';
 
 class EvaluationProvider {
-  static const resultPath = 'assets/results.json';
+  static const resultPath = 'assets/eval.json';
   List<EvaluationModel> results;
   EvaluationProvider();
 
@@ -23,7 +23,7 @@ class EvaluationProvider {
 
   List<EvaluationModel> parseResults(String resultString) {
     final data = json.decode(resultString) as List;
-
-    return data.map((json) => EvaluationModel.fromJson(json)).toList();
+    final output = data.map((json) => EvaluationModel.fromJson(json)).toList();
+    return output;
   }
 }

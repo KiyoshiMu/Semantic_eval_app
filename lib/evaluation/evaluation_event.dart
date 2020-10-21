@@ -36,3 +36,16 @@ class ShowEval extends EvaluationEvent {
     yield TagState(evaluationModel);
   }
 }
+
+class SubmitEval extends EvaluationEvent {
+  SubmitEval();
+
+  @override
+  Stream<EvaluationState> applyAsync(
+      {EvaluationState currentState, EvaluationBloc bloc}) async* {
+    if (currentState is TagState) {
+      bloc.writeEval(currentState.evaluationModel);
+      yield InitEvaluation();
+    }
+  }
+}

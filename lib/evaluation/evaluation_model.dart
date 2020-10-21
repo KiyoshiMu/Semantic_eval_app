@@ -20,6 +20,7 @@ class EvaluationModel extends Equatable {
     "lymphoproliferative disorder",
     "mastocytosis",
     "metastatic",
+    'monocytosis',
     "myelodysplastic syndrome",
     "myeloproliferative neoplasm",
     "normal",
@@ -30,9 +31,9 @@ class EvaluationModel extends Equatable {
 
   final int id;
   final Map text;
-  final List<double> prob;
-  final List<bool> predTag;
-  final List<bool> evalTag;
+  final List prob;
+  final List predTag;
+  final List evalTag;
   EvaluationModel(this.id, this.text, this.prob, this.predTag, this.evalTag);
 
   EvaluationModel update(int evalIdx) {
@@ -52,12 +53,28 @@ class EvaluationModel extends Equatable {
   List<Object> get props => [id, text, predTag, evalTag];
 
   factory EvaluationModel.fromJson(json) {
-    return EvaluationModel(
-        json['id'] ?? 1,
-        json['text'],
-        json['prob'] ?? List.filled(24, 0.5),
-        json['predTag'] ?? List.filled(24, true),
-        json['evalTag'] ?? List.filled(24, true));
+    final probTmp = json['prob'] as List;
+    final probs = probTmp.map((e) => e[1]).toList();
+    final output = EvaluationModel(
+        json['id'], json['text'], probs, json['pred'], json['pred']);
+    return output;
+  }
+
+  Map<String, dynamic> toJudge() {
+    List<String> rets = [];
+    predTag.asMap().forEach((key, value) {
+      if (value) rets.add(tags[key]);
+    });
+    List<String> evals = [];
+    evalTag.asMap().forEach((key, value) {
+      if (value == true) evals.add(tags[key]);
+    });
+
+    return {
+      'text': this.id.toString(),
+      'rets': rets.join(', '),
+      'mistakes': evals.join(', '),
+    };
   }
 }
 
