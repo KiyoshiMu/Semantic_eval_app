@@ -13,7 +13,6 @@ class EvaluationPage extends StatelessWidget {
     return PageView.builder(
       controller: pageController,
       itemBuilder: (BuildContext context, int index) {
-        print(index);
         return FutureBuilder(
           future: evaluationRepository.fetchEvaluation(index),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -24,7 +23,7 @@ class EvaluationPage extends StatelessWidget {
               return ListView(
                 children: [
                   Text(
-                    "Synopsis ${evaluationModel.id}",
+                    "Synopsis ${evaluationModel.id} ${evaluationModel.isDone ? 'Done' : ''}",
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline3,
                   ),
@@ -36,7 +35,7 @@ class EvaluationPage extends StatelessWidget {
                 ],
               );
             }
-            return CircularProgressIndicator();
+            return Container();
           },
         );
       },

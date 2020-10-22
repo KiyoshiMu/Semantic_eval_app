@@ -34,7 +34,18 @@ class EvaluationModel extends Equatable {
   final List prob;
   final List predTag;
   final List evalTag;
-  EvaluationModel(this.id, this.text, this.prob, this.predTag, this.evalTag);
+  final bool isDone;
+  EvaluationModel(this.id, this.text, this.prob, this.predTag, this.evalTag,
+      {this.isDone = false});
+
+  EvaluationModel markDone(bool isDone) {
+    if (isDone) {
+      return EvaluationModel(
+          this.id, this.text, this.prob, this.predTag, this.evalTag,
+          isDone: true);
+    }
+    return this;
+  }
 
   EvaluationModel update(int evalIdx) {
     evalTag[evalIdx] = !evalTag[evalIdx];
@@ -55,8 +66,8 @@ class EvaluationModel extends Equatable {
   factory EvaluationModel.fromJson(json) {
     final probTmp = json['prob'] as List;
     final probs = probTmp.map((e) => e[1]).toList();
-    final output = EvaluationModel(
-        json['id'], json['text'], probs, json['pred'], json['pred']);
+    final output = EvaluationModel(json['id'], json['text'], probs,
+        json['pred'], []..addAll(json['pred']));
     return output;
   }
 
@@ -72,8 +83,8 @@ class EvaluationModel extends Equatable {
 
     return {
       'text': this.id.toString(),
-      'rets': rets.join(', '),
-      'mistakes': evals.join(', '),
+      'pred': rets.join(", "),
+      'eval': evals.join(", "),
     };
   }
 }

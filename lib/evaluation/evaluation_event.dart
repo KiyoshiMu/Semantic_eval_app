@@ -44,7 +44,7 @@ class SubmitEval extends EvaluationEvent {
   Stream<EvaluationState> applyAsync(
       {EvaluationState currentState, EvaluationBloc bloc}) async* {
     if (currentState is TagState) {
-      bloc.writeEval(currentState.evaluationModel);
+      bloc.evaluationRepository.writeEval(currentState.evaluationModel);
       yield InitEvaluation();
     }
   }

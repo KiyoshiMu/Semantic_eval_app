@@ -1,6 +1,7 @@
 import 'package:eval_app/evaluation/evaluation_page.dart';
 import 'package:eval_app/evaluation/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'evaluation/evaluation_repository.dart';
@@ -17,7 +18,7 @@ class EvalApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: BlocProvider(
-          create: (context) => EvaluationBloc(),
+          create: (context) => EvaluationBloc(evaluationRepository),
           child: Frame(evaluationRepository: evaluationRepository),
         ));
   }
@@ -57,6 +58,7 @@ class _FrameState extends State<Frame> {
           evaluationRepository: widget.evaluationRepository,
           pageController: _pageController,
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(5.0),
           child: Row(
@@ -78,11 +80,22 @@ class _FrameState extends State<Frame> {
                 },
                 child: Icon(Icons.check),
               ),
-              FloatingActionButton(
-                onPressed: () {
-                  _nextpage();
-                },
-                child: Icon(Icons.navigate_next),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FloatingActionButton(
+                    onPressed: () {
+                      _nextpage();
+                    },
+                    child: Icon(Icons.navigate_next),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () {
+                      _topage();
+                    },
+                    child: Icon(Icons.search),
+                  ),
+                ],
               )
             ],
           ),
@@ -93,6 +106,75 @@ class _FrameState extends State<Frame> {
     return _pageController.nextPage(
       duration: const Duration(milliseconds: 200),
       curve: Curves.linear,
+    );
+  }
+
+  Future<void> _topage() async {
+    final page = await showDialog<int>(
+        context: context,
+        builder: (BuildContext context) {
+          return NumberPicker(currentPage: _pageController.page.toInt());
+        });
+    _pageController.animateToPage(
+      page,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.linear,
+    );
+  }
+}
+
+class NumberPicker extends StatefulWidget {
+  final int currentPage;
+  const NumberPicker({
+    Key key,
+    this.currentPage,
+  }) : super(key: key);
+
+  @override
+  _NumberPickerState createState() => _NumberPickerState();
+}
+
+class _NumberPickerState extends State<NumberPicker> {
+  int page;
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text("Go to page ${page ?? ''}"),
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            decoration: new InputDecoration(labelText: "Enter your number"),
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
+            onChanged: (value) {
+              setState(() {
+                page = int.parse(value);
+              });
+            },
+          ),
+        ),
+        ButtonBar(
+          children: [
+            FlatButton.icon(
+              icon: Icon(Icons.check),
+              onPressed: () {
+                Navigator.pop(context, page);
+              },
+              label: Text("Go"),
+            ),
+            FlatButton.icon(
+              icon: Icon(Icons.cancel_outlined),
+              onPressed: () {
+                Navigator.pop(context, widget.currentPage);
+              },
+              label: Text("Cancel"),
+            )
+          ],
+        ),
+      ],
     );
   }
 }
