@@ -12,15 +12,15 @@ class EvaluationProvider {
 
   List<EvaluationModel> results;
   EvaluationProvider();
-  Set<int> doneIndices;
+  Set<String> doneIndices;
 
-  Future<EvaluationModel> fetchEvaluation(int index) async {
+  Future<EvaluationModel> fetchEvaluation(int index, String judge) async {
     if (results == null) {
       final resultString = await _getFileData(resultPath);
       results = _parseResults(resultString);
     }
     final done = await getDone();
-    final isDone = done.contains(index);
+    final isDone = done.contains(index.toString() + judge);
     return results[index].markDone(isDone);
   }
 
@@ -34,21 +34,23 @@ class EvaluationProvider {
     return output;
   }
 
-  Future<Set<int>> getDone() async {
+  Future<Set<String>> getDone() async {
     if (this.doneIndices != null) {
       return this.doneIndices;
     }
     final response = await http.get(doneUrl);
     final data = json.decode(response.body) as List;
-    final output = data.skip(1).map((e) => int.parse(e[0])).toSet();
+    final output =
+        data.skip(1).map((e) => e[0].toString() + e[1].toString()).toSet();
     this.doneIndices = output;
     return output;
   }
 
-  Future<void> writeEval(EvaluationModel evaluationModel) async {
+  Future<void> writeEval(EvaluationModel evaluationModel, String judge) async {
     final content = evaluationModel.toJudge();
+    content['judge'] = judge;
     _apiRequest(evalUrl, content);
-    this.doneIndices.add(evaluationModel.id);
+    this.doneIndices.add(evaluationModel.id.toString() + judge);
   }
 
   Future<void> _apiRequest(String url, Map jsonMap) async {

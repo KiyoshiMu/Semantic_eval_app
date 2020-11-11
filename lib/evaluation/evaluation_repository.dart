@@ -7,15 +7,16 @@ class EvaluationRepository {
 
   EvaluationRepository();
 
-  Future<EvaluationModel> fetchEvaluation(int index) {
-    return _evaluationProvider.fetchEvaluation(index);
+  Future<EvaluationModel> fetchEvaluation(int index, String judge) {
+    return _evaluationProvider.fetchEvaluation(index, judge);
   }
 
-  Future<Set<int>> getDone() {
+  Future<Set<String>> getDone() {
     return _evaluationProvider.getDone();
   }
 
-  Future<void> writeEval(EvaluationModel evaluationModel) async {
-    return _evaluationProvider.writeEval(evaluationModel);
+  Future<void> writeEval(EvaluationModel evaluationModel,
+      {String judge: "Someone"}) async {
+    return _evaluationProvider.writeEval(evaluationModel, judge);
   }
 }

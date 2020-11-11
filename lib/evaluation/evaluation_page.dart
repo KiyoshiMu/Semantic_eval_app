@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class EvaluationPage extends StatelessWidget {
   final EvaluationRepository evaluationRepository;
   final PageController pageController;
+  final String judge;
   const EvaluationPage(
-      {Key key, this.evaluationRepository, this.pageController})
+      {Key key, this.evaluationRepository, this.pageController, this.judge})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class EvaluationPage extends StatelessWidget {
       controller: pageController,
       itemBuilder: (BuildContext context, int index) {
         return FutureBuilder(
-          future: evaluationRepository.fetchEvaluation(index),
+          future: evaluationRepository.fetchEvaluation(index, judge ?? ""),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               final evaluationModel = snapshot.data as EvaluationModel;
@@ -23,14 +24,19 @@ class EvaluationPage extends StatelessWidget {
               return ListView(
                 children: [
                   Text(
-                    "Synopsis ${evaluationModel.id} ${evaluationModel.isDone ? 'Done' : ''}",
+                    judge == null ? "Please set Judge" : "Judge: $judge",
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline3,
+                  ),
+                  Text(
+                    "Synopsis ${evaluationModel.id} ${evaluationModel.isDone ? 'Done' : 'New'}",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline4,
                   ),
                   Content(text: evaluationModel.text),
                   Text("Prediction",
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline3),
+                      style: Theme.of(context).textTheme.headline4),
                   EvaluationScreen(),
                 ],
               );

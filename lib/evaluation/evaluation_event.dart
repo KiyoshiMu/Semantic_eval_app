@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:eval_app/evaluation/index.dart';
 import 'package:meta/meta.dart';
@@ -25,6 +24,19 @@ class UpdateEval extends EvaluationEvent {
   }
 }
 
+class Updatejudge extends EvaluationEvent {
+  final String judge;
+
+  Updatejudge(this.judge);
+
+  @override
+  Stream<EvaluationState> applyAsync(
+      {EvaluationState currentState, EvaluationBloc bloc}) async* {
+    bloc.judge = this.judge;
+    yield currentState;
+  }
+}
+
 class ShowEval extends EvaluationEvent {
   final EvaluationModel evaluationModel;
 
@@ -44,7 +56,8 @@ class SubmitEval extends EvaluationEvent {
   Stream<EvaluationState> applyAsync(
       {EvaluationState currentState, EvaluationBloc bloc}) async* {
     if (currentState is TagState) {
-      bloc.evaluationRepository.writeEval(currentState.evaluationModel);
+      bloc.evaluationRepository
+          .writeEval(currentState.evaluationModel, judge: bloc.judge);
       yield InitEvaluation();
     }
   }

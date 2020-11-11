@@ -39,15 +39,20 @@ class Frame extends StatefulWidget {
 class _FrameState extends State<Frame> {
   PageController _pageController;
 
+  TextEditingController _tController;
+  String judge;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _tController = TextEditingController();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _tController.dispose();
     super.dispose();
   }
 
@@ -55,14 +60,15 @@ class _FrameState extends State<Frame> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: EvaluationPage(
-          evaluationRepository: widget.evaluationRepository,
-          pageController: _pageController,
-        ),
+            evaluationRepository: widget.evaluationRepository,
+            pageController: _pageController,
+            judge: judge),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(5.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               FloatingActionButton(
                 onPressed: () {
@@ -80,20 +86,26 @@ class _FrameState extends State<Frame> {
                 },
                 child: Icon(Icons.check),
               ),
-              Row(
+              Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   FloatingActionButton(
                     onPressed: () {
-                      _nextpage();
+                      _setjudge();
                     },
-                    child: Icon(Icons.navigate_next),
+                    child: Icon(Icons.people_alt_sharp),
                   ),
                   FloatingActionButton(
                     onPressed: () {
                       _topage();
                     },
                     child: Icon(Icons.search),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () {
+                      _nextpage();
+                    },
+                    child: Icon(Icons.navigate_next),
                   ),
                 ],
               )
@@ -121,6 +133,54 @@ class _FrameState extends State<Frame> {
       curve: Curves.linear,
     );
   }
+
+  Future<void> _setjudge() async {
+    final judge = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextField(
+                      onSubmitted: (s) {
+                        Navigator.pop(context, s);
+                      },
+                      textInputAction: TextInputAction.go,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline3,
+                      decoration: InputDecoration(
+                        labelText: "Enter Your Name",
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(),
+                        ),
+                        //fillColor: Colors.green
+                      ),
+                      controller: _tController,
+                    ),
+                    FlatButton.icon(
+                      icon: Icon(Icons.check),
+                      onPressed: () {
+                        Navigator.pop(context, _tController.text);
+                      },
+                      label: Text("OK"),
+                    )
+                  ]),
+            ),
+          ),
+        );
+      },
+    );
+    BlocProvider.of<EvaluationBloc>(context).add(Updatejudge(judge));
+    setState(() {
+      this.judge = judge;
+    });
+  }
 }
 
 class NumberPicker extends StatefulWidget {
@@ -144,7 +204,8 @@ class _NumberPickerState extends State<NumberPicker> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
-            decoration: new InputDecoration(labelText: "Enter your number"),
+            textInputAction: TextInputAction.go,
+            decoration: InputDecoration(labelText: "Enter your number"),
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly
@@ -153,6 +214,9 @@ class _NumberPickerState extends State<NumberPicker> {
               setState(() {
                 page = int.parse(value);
               });
+            },
+            onSubmitted: (s) {
+              Navigator.pop(context, int.parse(s));
             },
           ),
         ),

@@ -7,6 +7,7 @@ import 'package:eval_app/evaluation/index.dart';
 class EvaluationBloc extends Bloc<EvaluationEvent, EvaluationState> {
   EvaluationBloc(this.evaluationRepository) : super(InitEvaluation());
   final EvaluationRepository evaluationRepository;
+  String judge;
   @override
   Stream<EvaluationState> mapEventToState(
     EvaluationEvent event,
