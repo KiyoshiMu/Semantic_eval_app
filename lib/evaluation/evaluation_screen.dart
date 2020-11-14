@@ -33,6 +33,7 @@ class PredTable extends StatefulWidget {
 
 class _PredTableState extends State<PredTable> {
   bool sortAscending = false;
+  int sortColumnIndex = 1;
   @override
   void initState() {
     super.initState();
@@ -41,17 +42,34 @@ class _PredTableState extends State<PredTable> {
   @override
   Widget build(BuildContext context) {
     final results = widget.results;
+
     return DataTable(
-      sortColumnIndex: 1,
+      sortColumnIndex: sortColumnIndex,
       sortAscending: sortAscending,
       columns: [
-        const DataColumn(label: Text("Tag")),
+        DataColumn(
+          label: Text("Tag"),
+          onSort: (columnIndex, ascending) {
+            setState(() {
+              sortAscending = !sortAscending;
+              sortColumnIndex = 0;
+            });
+            if (columnIndex == 0) {
+              if (ascending) {
+                results.sort((a, b) => a.tag.compareTo(b.tag));
+              } else {
+                results.sort((a, b) => b.tag.compareTo(a.tag));
+              }
+            }
+          },
+        ),
         DataColumn(
           label: Text("Prob"),
           numeric: true,
           onSort: (columnIndex, ascending) {
             setState(() {
               sortAscending = !sortAscending;
+              sortColumnIndex = 1;
             });
             if (columnIndex == 1) {
               if (ascending) {
@@ -67,7 +85,7 @@ class _PredTableState extends State<PredTable> {
       rows: results
           .map((e) => DataRow(cells: [
                 DataCell(Text(e.tag)),
-                DataCell(Text(e.prob)),
+                DataCell(Text(e.prob.toStringAsFixed(3))),
                 DataCell(Checkbox(
                   onChanged: (bool value) {
                     BlocProvider.of<EvaluationBloc>(context)

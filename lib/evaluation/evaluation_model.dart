@@ -56,7 +56,7 @@ class EvaluationModel extends Equatable {
   Iterable<Result> iter() {
     return tags.map((e) {
       final idx = tags.indexOf(e);
-      return Result(idx, e, prob[idx].toString(), evalTag[idx]);
+      return Result(idx, e, double.parse(prob[idx].toString()), evalTag[idx]);
     });
   }
 
@@ -92,7 +92,7 @@ class EvaluationModel extends Equatable {
 class Result {
   final int idx;
   final String tag;
-  final String prob;
+  final double prob;
   final bool check;
 
   Result(this.idx, this.tag, this.prob, this.check);
