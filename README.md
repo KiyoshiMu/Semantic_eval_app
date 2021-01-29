@@ -13,7 +13,7 @@ For optimal performance, we recommend a computer with the following specs:
 
 The runtimes below are generated using a computer with the recommended specs:
  * RAM: 8 GB
- * CPU: 8 Intel(R) Core(TM) i5-8265U CPU @1.60GHz
+ * CPU: Intel(R) Core(TM) i5-8265U CPU @1.60GHz
 
 ### Software Requirements
 
