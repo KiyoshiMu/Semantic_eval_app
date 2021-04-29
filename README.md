@@ -21,9 +21,9 @@ The package development version is tested on Windows operating system (Windows 1
 
 ## Installation guide
 
-1. Download the application release from the https://storage.googleapis.com/pathopatho/Release.zip.
+1. Download the application release from the Releases.
 
-1. Extract all files from the Release.zip.
+1. Extract all files from the Viewer.zip.
 
 ## Demo
 
